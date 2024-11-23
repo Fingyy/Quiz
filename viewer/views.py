@@ -15,9 +15,12 @@ def start_game(request):
     number_of_questions = request.POST['quantity']  # rovnou [] kdyz je to povinny parametr
     difficulty = request.POST['difficulty']
     category = request.POST['category']
-    quiz = Quiz.create_game(number_of_questions, difficulty, category)
-    quiz.save(request)  # musim ulozit jinak po konci start_game se data ztrati
-    return redirect('/on_game')
+    try:
+        quiz = Quiz.create_game(number_of_questions, difficulty, category)
+        quiz.save(request)  # musim ulozit jinak po konci start_game se data ztrati
+        return redirect('/on_game')
+    except ValueError as e:
+        return render(request, 'error.html',{"message": str(e)})
 
 
 def on_game(request):
@@ -38,6 +41,11 @@ def on_game(request):
 
 
 def finish(request):
+    # v případě F5 se díky uloženému sessionu zobrazi výsledek
+    if 'quiz_result' in request.session:
+        result = request.session['quiz_result']
+        return render(request, 'finish.html', result)
+
     # Obnovení uloženého stavu kvízu
     quiz = Quiz.restore(request)
     if not quiz:
@@ -45,6 +53,7 @@ def finish(request):
 
     # Získání výsledků kvízu
     result = quiz.get_result()
+    request.session['quiz_result'] = result
     # Ukončení kvízu a odstranění ze session
     quiz.stop(request)
     # Zobrazení výsledků v šabloně

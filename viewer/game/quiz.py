@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from .api_client import ApiClient
 from .question import Question
 from typing import List
+from django.shortcuts import render
 
 
 @dataclass
@@ -17,6 +18,11 @@ class Quiz:
     def create_game(cls, number_of_questions, difficulty, category):
         raw_questions = ApiClient.get_questions(difficulty, number_of_questions, category)
         questions = list([Question(**raw_question) for raw_question in raw_questions])
+        # if len(questions) == 0:
+        #     raise ValueError("Žádné otázky nejsou k dispozici.")
+        # if int(number_of_questions) > len(questions):
+        #     # number_of_questions = str(len(questions))
+        #     return Quiz(len(questions), difficulty, questions, 0, 0, True)
         return Quiz(number_of_questions, difficulty, questions, 0, 0, True)
 
     def save(self, request):
@@ -24,7 +30,7 @@ class Quiz:
 
     @staticmethod
     def stop(request):
-        del request.session['saved_quiz']
+        del request.session['saved_quiz']  # jen smaže klíč 'saved_quiz'] ze sessionu
 
     @classmethod
     def restore(cls, request):
