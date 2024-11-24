@@ -15,6 +15,9 @@ def start_game(request):
     number_of_questions = request.POST['quantity']  # rovnou [] kdyz je to povinny parametr
     difficulty = request.POST['difficulty']
     category = request.POST['category']
+
+    if 'quiz_result' in request.session:
+        del request.session['quiz_result']
     try:
         quiz = Quiz.create_game(number_of_questions, difficulty, category)
         quiz.save(request)  # musim ulozit jinak po konci start_game se data ztrati
