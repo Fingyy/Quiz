@@ -18,9 +18,13 @@ from django.contrib import admin
 from django.urls import path
 
 from viewer.views import start_game, on_game, finish, index
+from viewer.models import Game
+
+admin.site.register(Game)
 
 urlpatterns = [
     path('', index, name='index'),
+    path('admin/', admin.site.urls),
     path('start_game', start_game, name='start_game'),
     path('on_game', on_game, name='on_game'),
     path('finish', finish, name="finish")

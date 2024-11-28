@@ -18,11 +18,11 @@ class Quiz:
     def create_game(cls, number_of_questions, difficulty, category):
         raw_questions = ApiClient.get_questions(difficulty, number_of_questions, category)
         questions = list([Question(**raw_question) for raw_question in raw_questions])
-        # if len(questions) == 0:
-        #     raise ValueError("Žádné otázky nejsou k dispozici.")
-        # if int(number_of_questions) > len(questions):
-        #     # number_of_questions = str(len(questions))
-        #     return Quiz(len(questions), difficulty, questions, 0, 0, True)
+        if len(questions) == 0:
+            raise ValueError("Žádné otázky nejsou k dispozici.")
+        if int(number_of_questions) > len(questions):
+            # number_of_questions = str(len(questions))
+            return Quiz(len(questions), difficulty, questions, 0, 0, True)
         return Quiz(number_of_questions, difficulty, questions, 0, 0, True)
 
     def save(self, request):
@@ -34,7 +34,7 @@ class Quiz:
 
     @classmethod
     def restore(cls, request):
-        return request.session.get('saved_quiz')
+        return request.session.get('saved_quiz')  # get zajisti,ze pokud klci neexistuje, vrati Nonea
 
     def get_question(self):
         if self.current_question >= len(self.questions):

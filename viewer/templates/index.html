@@ -10,6 +10,9 @@
         <form method="post" action="/start_game">
             <div class="form-group">
                 {% csrf_token %}
+                <h3>Set your nickname:</h3>
+                <input class="form-control" type="text" name="nick"  placeholder="Enter your nickname">
+
                 <h3>Choose the number of questions:</h3>
                 <input class="form-control" type="number" name="quantity" min="1" max="{{ max_questions }}" value="10">
 

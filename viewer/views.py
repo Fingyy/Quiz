@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect
+from django.views.generic import ListView
 from viewer.game.api_client import ApiClient
 from viewer.game.quiz import Quiz
+from django.views.decorators.cache import cache_page
+from time import time
+from viewer.models  import Game
 
 
+@cache_page(60 * 15)  # ulozi do cache na 15min (at se nemusi prikaz pokazde vykonat)
 def index(request):
     try:
         quiz = ApiClient.get_quiz_options()
@@ -15,12 +20,17 @@ def start_game(request):
     number_of_questions = request.POST['quantity']  # rovnou [] kdyz je to povinny parametr
     difficulty = request.POST['difficulty']
     category = request.POST['category']
+    nick = request.POST['nick']
 
     if 'quiz_result' in request.session:
         del request.session['quiz_result']
     try:
         quiz = Quiz.create_game(number_of_questions, difficulty, category)
         quiz.save(request)  # musim ulozit jinak po konci start_game se data ztrati
+        game_stat = Game(nick_name=nick, difficulty=difficulty, category=category, total_questions=number_of_questions)
+        game_stat.save()
+        request.session['game_stat'] = game_stat
+        request.session['start_time'] = time()
         return redirect('/on_game')
     except ValueError as e:
         return render(request, 'error.html',{"message": str(e)})
@@ -40,6 +50,11 @@ def on_game(request):
         quiz.save(request)
         return render(request, 'game.html', vars(question))
     except IndexError as x:
+        start_quiz = request.session['start_time']
+        end_quiz = time()
+        duration = end_quiz - start_quiz
+        request.session['duration'] = duration
+
         return redirect('/finish')
 
 
@@ -57,7 +72,22 @@ def finish(request):
     # Získání výsledků kvízu
     result = quiz.get_result()
     request.session['quiz_result'] = result
+    number_of_correct_answers = quiz.number_of_correct_answers
     # Ukončení kvízu a odstranění ze session
     quiz.stop(request)
+    if request.session['duration']:
+        result['duration'] = str(request.session['duration'])
+        duration = request.session['duration']
+        game_stat = request.session['game_stat']
+        game_stat.duration = duration
+        game_stat.correct_answers = number_of_correct_answers
+        game_stat.save()
+
     # Zobrazení výsledků v šabloně
     return render(request, 'finish.html', result)
+
+
+class GameList(ListView):
+    model = Game
+    template_name = 'game_list.html'
+    context_object_name = 'games'
