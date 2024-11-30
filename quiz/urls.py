@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from viewer.views import start_game, on_game, finish, index
+from viewer.views import start_game, on_game, finish, index, ResultList
 from viewer.models import Game
 
 admin.site.register(Game)
@@ -27,5 +27,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('start_game', start_game, name='start_game'),
     path('on_game', on_game, name='on_game'),
-    path('finish', finish, name="finish")
+    path('finish', finish, name="finish"),
+    path('result', ResultList.as_view(), name='result'),
 ]

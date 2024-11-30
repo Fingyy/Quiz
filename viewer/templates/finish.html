@@ -1,7 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <style>
+    .progress {
+        max-width: 600px; /* Maximální šířka progress baru */
+        width: 100%; /* Přizpůsobí se rodičovskému kontejneru */
+    }
+    </style>
 <h2>Game Over</h2>
-<h5> Your final score is {{ correct_answers }} of {{ all_questions }} questions.</h5>
-    <h5>Quiz lasted {{ duration|floatformat:0}} sec.</h5>
+<h5> Quiz lasted {{ duration_format }} and your final score is {{ correct_answers }} of {{ all_questions }}
+    questions.</h5>
+    <div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="{{ rate }}" aria-valuemin="0" aria-valuemax="100">
+  <div class="progress-bar" style="width: {{ rate }}%">{{ rate }}%</div>
+</div>
+    <a class="btn btn-success" href="{% url 'result' %}">Results</a>
 {% endblock %}

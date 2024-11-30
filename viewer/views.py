@@ -48,7 +48,9 @@ def on_game(request):
     try:
         question = quiz.get_question()
         quiz.save(request)
-        return render(request, 'game.html', vars(question))
+        context = vars(question)
+        context['quiz'] = quiz
+        return render(request, 'game.html', context)
     except IndexError as x:
         start_quiz = request.session['start_time']
         end_quiz = time()
@@ -77,17 +79,19 @@ def finish(request):
     quiz.stop(request)
     if request.session['duration']:
         result['duration'] = str(request.session['duration'])
-        duration = request.session['duration']
         game_stat = request.session['game_stat']
-        game_stat.duration = duration
+        game_stat.duration = request.session['duration']
         game_stat.correct_answers = number_of_correct_answers
         game_stat.save()
+        result['rate'] = game_stat.success_rate
+        result['duration_format'] = game_stat.duration_format()
 
     # Zobrazení výsledků v šabloně
     return render(request, 'finish.html', result)
 
 
-class GameList(ListView):
+class ResultList(ListView):
     model = Game
-    template_name = 'game_list.html'
-    context_object_name = 'games'
+    template_name = 'result_list.html'
+    context_object_name = 'results'
+    ordering = ['total_questions']
