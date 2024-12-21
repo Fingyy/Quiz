@@ -94,4 +94,8 @@ class ResultList(ListView):
     model = Game
     template_name = 'result_list.html'
     context_object_name = 'results'
-    ordering = ['total_questions']
+    ordering = ['total_questions']  # Seřadíme výsledky od nejlepších
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset[:11]  # Vrátíme jen prvních 10

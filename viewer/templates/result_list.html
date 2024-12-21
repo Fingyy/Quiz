@@ -47,6 +47,7 @@
         </thead>
         <tbody>
         {% for result in results %}
+            {% if result.duration > 9 and result.total_questions > 2 %}
             <tr>
                 <th scope="row">{{ result.id }}</th>
                 <td>{{ result.nick_name }}</td>
@@ -56,6 +57,7 @@
                 <td class="questions-column">{{ result.total_questions }}</td>
                 <td>{{ result.success_rate }} %</td>
             </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>
