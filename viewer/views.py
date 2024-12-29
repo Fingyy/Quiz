@@ -3,6 +3,8 @@ from django.views.generic import ListView
 from viewer.game.api_client import ApiClient
 from viewer.game.quiz import Quiz
 from django.views.decorators.cache import cache_page
+from django.db.models import F, ExpressionWrapper, FloatField
+from django.db.models.functions import Round
 from time import time
 from viewer.models  import Game
 
@@ -94,8 +96,16 @@ class ResultList(ListView):
     model = Game
     template_name = 'result_list.html'
     context_object_name = 'results'
-    ordering = ['total_questions']  # Seřadíme výsledky od nejlepších
+    # ordering = ['-total_questions', '-success_rate_calculated']  # Seřadíme výsledky od nejlepších
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset[:11]  # Vrátíme jen prvních 10
+        queryset = queryset.annotate(
+            success_rate_calculated=ExpressionWrapper(
+                F('correct_answers') * 100.0 / F('total_questions'),
+                output_field=FloatField()
+            )
+        )
+        # Filtrování a řazení
+        filtered_queryset = queryset.filter(duration__gt=2, total_questions__gt=3)
+        return filtered_queryset.order_by('-total_questions', '-success_rate_calculated')[:10]  # Vrátíme jen prvních 10

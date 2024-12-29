@@ -5,6 +5,30 @@
     <title>Quiz App</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <style>
+        .social-icons {
+            display: flex;
+            justify-content: center; /* Zarovná ikony na střed */
+            gap: 20px; /* Vzdálenost mezi ikonami */
+            margin-bottom: 20px; /* Odstup od dalších prvků */
+        }
+
+        .social-icons i {
+            font-size: 40px; /* Zvětšení ikon */
+            color: #000; /* Nastavení barvy ikon */
+            transition: color 0.3s; /* Animace při přejetí myší */
+        }
+
+        .social-icons i:hover {
+            color: #007bff; /* Změna barvy při hover efektu */
+        }
+
+        footer img {
+            max-width: 150px; /* Nastaví maximální šířku obrázku */
+            margin-top: 20px; /* Odstup od ikon */
+        }
+    </style>
 </head>
 <body>
 
@@ -27,6 +51,17 @@
 {% endblock %}
 
 <footer class="page-footer font-small mdb-color darken-3 pt-4">
+        <div class="social-icons">
+            <a href="https://www.instagram.com" target="_blank">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com" target="_blank">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+            <a href="https://www.youtube.com" target="_blank">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+        </div>
     <div class="footer-copyright text-center py-3">© {% now 'Y' %} Copyright:
         <a href="https://sdacademy.cz/"> Software development academy</a>
         <div>
