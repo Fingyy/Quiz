@@ -19,14 +19,19 @@
                 <h3>Choose the difficulty level:</h3>
                 <select name="difficulty" class="custom-select">
                     {% for level in difficulty %}
-                    <option {% if forloop.first %}selected{% endif %} value="{{ level }}">{{ level|title }}</option>
+                    <option {% if forloop.first %}selected{% endif %}
+                            value="{{ level }}">
+                        {{ level|title }}
+                    </option>
                     {% endfor %}
                 </select>
 
                 <h3>Choose the topic:</h3>
                 <select name="category" class="custom-select">
                     {% for category in categories %}
-                    <option {% if forloop.first %}selected{% endif %} value="{{ category.id }}">{{ category.name|title }}
+                    <option {% if forloop.first %}selected{% endif %}
+                            value="{{ category.id }}">
+                        {{ category.name|title }}
                     </option>
                     {% endfor %}
                 </select>

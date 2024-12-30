@@ -4,15 +4,18 @@ from viewer.game.api_client import ApiClient
 from viewer.game.quiz import Quiz
 from django.views.decorators.cache import cache_page
 from django.db.models import F, ExpressionWrapper, FloatField
-from django.db.models.functions import Round
+from django.core.cache import cache
 from time import time
-from viewer.models  import Game
+from viewer.models import Game
+from requests import get
 
 
 @cache_page(60 * 15)  # ulozi do cache na 15min (at se nemusi prikaz pokazde vykonat)
 def index(request):
     try:
         quiz = ApiClient.get_quiz_options()
+        # Uložení kategorii do cache
+        cache.set('categories', quiz['categories'], 60 * 15)
         return render(request, 'index.html', quiz)
     except ValueError:
         return render(request, 'error.html',{"message": "Chyba nacitani databaze"})
@@ -21,15 +24,23 @@ def index(request):
 def start_game(request):
     number_of_questions = request.POST['quantity']  # rovnou [] kdyz je to povinny parametr
     difficulty = request.POST['difficulty']
-    category = request.POST['category']
     nick = request.POST['nick']
+
+    categories = cache.get('categories')
+    if not categories:
+        # Pokud nejsou v cache, znovu je nacti
+        categories = get(ApiClient.CATEGORIES_URL).json()['trivia_categories']
+
+    category_id = request.POST['category']
+    category_name = next((c['name'] for c in categories if c['id'] == category_id), None)
 
     if 'quiz_result' in request.session:
         del request.session['quiz_result']
     try:
-        quiz = Quiz.create_game(number_of_questions, difficulty, category)
+        quiz = Quiz.create_game(number_of_questions, difficulty, category_id)
         quiz.save(request)  # musim ulozit jinak po konci start_game se data ztrati
-        game_stat = Game(nick_name=nick, difficulty=difficulty, category=category, total_questions=number_of_questions)
+        game_stat = Game(nick_name=nick, difficulty=difficulty, category_id=category_id, category_name=category_name,
+                         total_questions=number_of_questions)
         game_stat.save()
         request.session['game_stat'] = game_stat
         request.session['start_time'] = time()
