@@ -6,12 +6,24 @@
         max-width: 600px; /* Maximální šířka progress baru */
         width: 100%; /* Přizpůsobí se rodičovskému kontejneru */
     }
+
+    .final_text {
+        color: #FFFF00;
+    }
     </style>
+    <div class="final_text">
 <h2>Game Over</h2>
-<h5> Quiz lasted {{ duration_format }} and your final score is {{ correct_answers }} of {{ all_questions }}
+    {% if number_of_decreasing %}
+    	<h5> Quiz lasted {{ duration_format }} and your final score is {{ correct_answers }} of {{ all_questions }}
+    questions. There were less questions in database and given questions were reduced by {{ number_of_decreasing }}</h5>
+    {% else %}
+        <h5> Quiz lasted {{ duration_format }} and your final score is {{ correct_answers }} of {{ all_questions }}
     questions.</h5>
+    {% endif %}
     <div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="{{ rate }}" aria-valuemin="0" aria-valuemax="100">
   <div class="progress-bar" style="width: {{ rate }}%">{{ rate }}%</div>
 </div>
     <a class="btn btn-success" href="{% url 'result' %}">Results</a>
+
+    </div>
 {% endblock %}

@@ -90,7 +90,8 @@ def finish(request):
     number_of_correct_answers = quiz.number_of_correct_answers
     # Ukončení kvízu a odstranění ze session
     quiz.stop(request)
-    if request.session['duration']:
+
+    if 'duration' in request.session:
         result['duration'] = str(request.session['duration'])
         game_stat = request.session['game_stat']
         game_stat.duration = request.session['duration']
@@ -98,6 +99,9 @@ def finish(request):
         game_stat.save()
         result['rate'] = game_stat.success_rate
         result['duration_format'] = game_stat.duration_format()
+
+    if 'number_of_decreasing' in request.session:
+        result['number_of_decreasing'] = request.session['number_of_decreasing']
 
     # Zobrazení výsledků v šabloně
     return render(request, 'finish.html', result)

@@ -3,6 +3,9 @@
 
 {% block content %}
     <style>
+        .tittle {
+            color:#FFFF00;
+        }
         .table {
             font-size: 18px; /* Nastavení většího písma */
             width: 90%; /* Tabula zabere celou šířku */
@@ -11,7 +14,7 @@
 
         .table th,
         .table td {
-            padding: 10px; /* Přidá prostor mezi textem a okraji */
+            padding: 4px; /* Přidá prostor mezi textem a okraji */
             text-align: center; /* Zarovná text na střed */
             border: 1px solid #ddd; /* Přidá okraje kolem buněk */
             vertical-align: middle; /* Vertikální zarovnání */
@@ -23,7 +26,7 @@
         }
 
         .table th {
-            background-color: #3EAFDE; /* Světle šedé pozadí hlaviček */
+            background: linear-gradient(to right, #1E90FF, #FF5733);
             font-weight: bold; /* Zvýraznění textu */
         }
 
@@ -32,7 +35,7 @@
             background-color: #D7EEF8; /* Světle šedé pozadí hlaviček */
         }
     </style>
-    <h1>Game Results</h1>
+    <h1 class="tittle">Game Results</h1>
     <table class="table">
         <thead>
         <tr>
@@ -50,7 +53,7 @@
             <tr>
                 <th scope="row">{{ result.id }}</th>
                 <td>{{ result.nick_name }}</td>
-                <td>{{ result.difficulty }}</td>
+                <td>{{ result.capitalize_difficulty }}</td>
                 <td>{{ result.duration_format}} </td>
                 <td>{{ result.category_name }}</td>
                 <td class="questions-column">{{ result.total_questions }}</td>

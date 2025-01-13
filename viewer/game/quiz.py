@@ -16,14 +16,11 @@ class Quiz:
 
     @classmethod
     def create_game(cls, number_of_questions, difficulty, category_id):
-        raw_questions = ApiClient.get_questions(difficulty, number_of_questions, category_id)
+        raw_questions = ApiClient.get_questions(difficulty, number_of_questions, category_id, request=None)
         questions = list([Question(**raw_question) for raw_question in raw_questions])
-        print(questions)
+        number_of_questions = int(number_of_questions)
         if len(questions) == 0:
             raise ValueError("Žádné otázky nejsou k dispozici.")
-        if int(number_of_questions) > len(questions):
-            # number_of_questions = str(len(questions))
-            return Quiz(len(questions), difficulty, questions, 0, 0, True)
         return Quiz(number_of_questions, difficulty, questions, 0, 0, True)
 
     def save(self, request):
