@@ -27,6 +27,7 @@ class ApiClient:
             if response_data['response_code'] == 0:
                 if request is not None and number_of_decreasing > 0:
                     request.session['number_of_decreasing'] = number_of_decreasing
+
                 return response_data['results']
 
             del response_data

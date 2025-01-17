@@ -31,13 +31,13 @@ def start_game(request):
         # Pokud nejsou v cache, znovu je nacti
         categories = get(ApiClient.CATEGORIES_URL).json()['trivia_categories']
 
-    category_id = request.POST['category']
+    category_id = int(request.POST['category'])
     category_name = next((c['name'] for c in categories if c['id'] == category_id), None)
 
     if 'quiz_result' in request.session:
         del request.session['quiz_result']
     try:
-        quiz = Quiz.create_game(number_of_questions, difficulty, category_id)
+        quiz = Quiz.create_game(number_of_questions, difficulty, category_id, request)
         quiz.save(request)  # musim ulozit jinak po konci start_game se data ztrati
         game_stat = Game(nick_name=nick, difficulty=difficulty, category_id=category_id, category_name=category_name,
                          total_questions=number_of_questions)

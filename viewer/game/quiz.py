@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+
+import requests
+
 from .api_client import ApiClient
 from .question import Question
 from typing import List
@@ -15,12 +18,15 @@ class Quiz:
     just_started: bool
 
     @classmethod
-    def create_game(cls, number_of_questions, difficulty, category_id):
+    def create_game(cls, number_of_questions, difficulty, category_id, request):
         raw_questions = ApiClient.get_questions(difficulty, number_of_questions, category_id, request=None)
         questions = list([Question(**raw_question) for raw_question in raw_questions])
         number_of_questions = int(number_of_questions)
         if len(questions) == 0:
             raise ValueError("Žádné otázky nejsou k dispozici.")
+        if 'number_of_decreasing' in request.session:
+            number_of_decreasing = request.session['number_of_decreasing']
+            number_of_questions -= number_of_decreasing
         return Quiz(number_of_questions, difficulty, questions, 0, 0, True)
 
     def save(self, request):

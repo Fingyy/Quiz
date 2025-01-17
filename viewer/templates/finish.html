@@ -13,7 +13,7 @@
     </style>
     <div class="final_text">
 <h2>Game Over</h2>
-    {% if number_of_decreasing %}
+    {% if number_of_decreasing > 0 %}
     	<h5> Quiz lasted {{ duration_format }} and your final score is {{ correct_answers }} of {{ all_questions }}
     questions. There were less questions in database and given questions were reduced by {{ number_of_decreasing }}</h5>
     {% else %}
